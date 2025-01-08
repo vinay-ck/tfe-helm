@@ -1,0 +1,16 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+  # TFE_RUN_PIPELINE_KUBERNETES_POD_TEMPLATE: 
+  TFE_LICENSE_PATH: "/opt/terraform-enterprise-license/licence.hclic"
+  TFE_HOSTNAME: "tfe-poc.cksg.com"
+  TFE_DATABASE_USER: "tfe_postgres"
+  TFE_DATABASE_NAME: "tfe_external_db"
+  TFE_OBJECT_STORAGE_TYPE: "s3"
+  TFE_OBJECT_STORAGE_S3_USE_INSTANCE_PROFILE: "true"
+  TFE_OBJECT_STORAGE_S3_BUCKET: "tfe-s3-external-poc"
+  TFE_OBJECT_STORAGE_S3_REGION: "ap-southeast-1"
+  # TFE_REDIS_USER:
+  # TFE_REDIS_PASSWORD:
+  TFE_REDIS_USE_AUTH: "false"
+  TFE_REDIS_USE_TLS: "true"

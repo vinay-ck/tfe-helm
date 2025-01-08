@@ -1,0 +1,262 @@
+replicaCount: 1
+
+# Image pull secret to use for registry authentication.
+imagePullSecrets:
+- name: terraform-enterprise
+
+# Image sets the repo, name and tag of the Terraform Enterprise image to use.
+image:
+ repository: vinaydockernaidu
+ name: tfe
+ tag: v202411-1
+ pullPolicy: IfNotPresent
+
+serviceAccount:
+  enabled: false
+  name: tfe-svc-account
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::096100671580:role/iamrole-tfe-eks-serviceaccount
+  labels: {}
+
+pod:
+# Configure pod annotations
+  annotations: {}
+  labels:
+    name: tfe-container
+container:
+# Configure pod specific security context settings
+  securityContext: {}
+    # runAsUser: 1000
+    # fsGroup: 1012
+    # runAsNonRoot: true  
+
+# The deployment's strategy is not set by default. This should be a YAML map corresponding to a
+# Kubernetes [DeploymentStrategy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#deploymentstrategy-v1-apps) object.
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# Resource limits are not set by default, to give the user the ability to set specific resource limits.
+# If you do want to specify resource limits, uncomment the following lines and adjust them as necessary.
+resources:
+  requests:
+    memory: "2500Mi"
+    cpu: "750m"
+  # limits:
+  #   memory: ""
+  #   cpu: ""
+
+# TLS for end-to-end encrypted transport
+# Including secrets in Helm charts can expose sensitive data if the charts are
+# stored in a version control system like Git, where they might be accessible
+# to unauthorized users. It is recommended to manage secrets through a secure
+# secrets management system. The values given below are for testing purposes only.
+tls:
+  certificateSecret: terraform-enterprise-certificates
+  caCertBaseDir: /etc/ssl/certs
+  caCertFileName: custom_ca_certs.pem
+  certMountPath: /etc/ssl/private/terraform-enterprise/cert.pem
+  keyMountPath: /etc/ssl/private/terraform-enterprise/key.pem
+  certData: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURyVENDQXBVQ0ZHekJPYy9DUWJpSGF5UW9weUd2WnVlKy9OalNNQTBHQ1NxR1NJYjNEUUVCQ3dVQU1JR1MKTVFzd0NRWURWUVFHRXdKVFJ6RUxNQWtHQTFVRUNBd0NVMGN4Q3pBSkJnTlZCQWNNQWxOSE1SVXdFd1lEVlFRSwpEQXhEU3lCemFXNW5ZWEJ2Y21VeEN6QUpCZ05WQkFzTUFrTkxNUmt3RndZRFZRUUREQkIwWm1VdGNHOWpMbU5yCmMyY3VZMjl0TVNvd0tBWUpLb1pJaHZjTkFRa0JGaHQyYVc1aGVXNWhhV1IxYTNWdFlYSXdOMEJuYldGcGJDNWoKYjIwd0hoY05NalV3TVRBM01EazBPVFV4V2hjTk1qWXdNVEEzTURrME9UVXhXakNCa2pFTE1Ba0dBMVVFQmhNQwpVMGN4Q3pBSkJnTlZCQWdNQWxOSE1Rc3dDUVlEVlFRSERBSlRSekVWTUJNR0ExVUVDZ3dNUTBzZ2MybHVaMkZ3CmIzSmxNUXN3Q1FZRFZRUUxEQUpEU3pFWk1CY0dBMVVFQXd3UWRHWmxMWEJ2WXk1amEzTm5MbU52YlRFcU1DZ0cKQ1NxR1NJYjNEUUVKQVJZYmRtbHVZWGx1WVdsa2RXdDFiV0Z5TURkQVoyMWhhV3d1WTI5dE1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXNVeUhaUjc0YUhpOVpiTkFMU0RNVkY1aHpzMkJYYWpsCk1qRUFHT2lPOTdtYkd2cVh2L1pvOGpnWlJRTmVoVG9CdmluOGpsV2xhbVFXNDQybkdEWjFsdHdveTVSRHRuaTcKbWN2YnBKRWlWa3puMWh5VDdOa2pqTWZnSE85SDNEOGxQQ3NqMWxuSThTK0I2eWlLbEI2MXZBdzB4d291UnRpNgp1eFF3dXJ5TlhXT2IwU3k3dHRPODdXMVpGZWdGRDRxZEJWZFI2S212MGExejBncE40eEFKZ2d5V084WTBWUXJDCjQxQ2J6WmNqeWpCdkM2QVgwNWpoOHRhcjYreG0ySGJSMTREK1QzbnFZZW5lWGhmeU96ZHM0TExaTXBuUWQ0dkUKZ3RyQjE4ZWF6RGpzRE9rUHA0MFZyTit6amR1NExHSWFFZFhWYmQxOE5mbHB0UUFLaHFwRGlRSURBUUFCTUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQlAyUGRZeUQ1UndrbUJob1RQa09paFlIUjZEZ1NxZFRDY3NZSnZ6cmNxCkFHWUkrQlVyYTcxZ3Q1L2srMjB2UEMzVGY1WitDenU2Y2FUYXRkUENpT3BHaEZ1VEpaRUZ3UXc1SWxlWEk4T2YKYXBVVWJOcVZsYUhKdUFSTEJjR1hwZG01Umh4SnNCZit4Wk01dE5laGt5bGxHS3YvSVVjbFNURHdFU2tNZzNCcAo3djJVZXhzWElnZGt4ZklvZmNnYlRMaThucjF3VlJqN3h0ZTByVldKL1FQTDBJL1V1dCtZTWNSa3p4bHp1bTJKCjNhZ09LbnVUYkJkNUhCcXhjQVUyUVVxRGZBOHFpR1ZaeFZxTHN3YUs0Tk1WOGt3ay9WVTdxb3RxeUJaM0oxZC8KWElpUUxQYnRtK3NIVmIwV0ZZeWJ2U0ZMek14VjJ4SEdEOVZDTnpWUlZIbjMKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  keyData: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2QUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktZd2dnU2lBZ0VBQW9JQkFRQ3hUSWRsSHZob2VMMWwKczBBdElNeFVYbUhPellGZHFPVXlNUUFZNkk3M3Vac2ErcGUvOW1qeU9CbEZBMTZGT2dHK0tmeU9WYVZxWkJiagpqYWNZTm5XVzNDakxsRU8yZUx1Wnk5dWtrU0pXVE9mV0hKUHMyU09NeCtBYzcwZmNQeVU4S3lQV1djanhMNEhyCktJcVVIclc4RERUSENpNUcyTHE3RkRDNnZJMWRZNXZSTEx1MjA3enRiVmtWNkFVUGlwMEZWMUhvcWEvUnJYUFMKQ2szakVBbUNESlk3eGpSVkNzTGpVSnZObHlQS01HOExvQmZUbU9IeTFxdnI3R2JZZHRIWGdQNVBlZXBoNmQ1ZQpGL0k3TjJ6Z3N0a3ltZEIzaThTQzJzSFh4NXJNT093TTZRK25qUldzMzdPTjI3Z3NZaG9SMWRWdDNYdzErV20xCkFBcUdxa09KQWdNQkFBRUNnZ0VBUE9FWjFyT2hPWUpJQ28xWDJvY2FFbGhNUG00Ylh6VTQ2aGlnUDIxUGRpbWgKNUV3cTRrdnlza1ZvQytZQnhUNXJUY2h1QTlQTjFtL2kyaVVRUE1TcWNQQk5BOFozejhhNktDK3pUbGxWa0l1Ywp5YzBMVURjcE9WU0NsSHpuVUczUVU4NCtZb0oyK0xaRzVxQUhvWisvNkgvS2VaUDUydkxkZjVLSnZ2MHlqMStxCjdJS1diYTBiWkpwbkVJTHkvYS8vTWpkcHllTm5wbXdwdFNMSTIrUTJWamhiN00raTJSM3p1KzJXTHB5T0dYa1oKSzRVSGZiMUNGc3pTMXhhOHg2QUpNZFNLVTVWbnk2ZFBCZDhhTXhDQVV6QnNmSFY3WDVTbHJrVTJoS0hlYTkzMApob3ZqMGl0d1RjWGtZdEVNV1NpcU81ZlRJbmFmbnhpWDB5VUZwWjFrMXdLQmdRRHVWOXRwakMxTng4UUsvS0VyCmN2eUx0WWp4VmhUcjh0d3pLZHhya2xGMUY4OXQyMXlkS25DSXhaaGVwNjZVa0E2UGo3SXRIb2lKSHlkeU5pN2UKemMxd3pZRjdzaUNqV1grejVMaGRyUkNISDVHYm4vNHJnOWN2b0VuUHFsei9MT29PNXVVR25wc3NVdkdCUzNiMwpTZWRnOUFKSEx4NUhvQUNFS0xvbmY1c3hUd0tCZ1FDK2J2b0xnR1FGTHRKRXB1V0MzakJnU3Y0c2FQL2w4djA3CkVXUHRBelhnbWRRRTNVMmpTT0JUNGxWUlNYdjB2WlhsTUJWUDAxZ05TaDcvc1hxcUs5WVBkU0VFTnVOWmRobmEKMzhkYzRSTTMzclhYNDdzTXVwajhjUmQ3S0YzbEJJS3I0bm8wZ0lKeHF1Y1VMY1o2S0Y0a1lqWnRlU1g4bHpMTAp0MHgrTTFFWHB3S0JnR0lld1RFK2lCZ1JPVi9jaU8wK05VRyt4bFcwUG9DMFJucTVyUWlNQUFUWWZJaVpXaE5KCnVYSlZCbGxSWnNtNlZJUTlmL2liTFZKbUJQTTc0eWZPU2RrNmdTZlBPU2lHVzlCUFJLY3I3RFgwaFJrd1VJN1IKZy9FVFo4K2FMeGJPQXIySHlKbGxDalRCSUxNOXdnZ2o0S0ZGVXZyREp4QU5pcWpkcTJVL1gwQjVBb0dBT0c2dwpvSW5xbWZLWEV3c1dSbUxMbVMyQUJ1OFNyalVFditWV1pGMG9NU2ZFd2JCSEdwVTFEUWFzVzh0WDlWM2ROcTY2CkVnN0NNQ1gvNjZ2UGV2QkVuZzRLdTdIOFMzMkpDZWg0cnRod0ZvVmtBOWNUamlFWnh1MUlsUkdRU1phOWxtd2wKNUxzVWJOVEZaNkJ0Q2JRK3VhOTFDNW4wSE5jOWtVci9Xd0tnREU4Q2dZQUxxMWVMWEpnU2dTdDliR0tuL2VTRwpmeTVEUU5VOG1iNko5cjE3dHk0VVdnZC9mREhvSWFieWZnT1M2amxjTVh5YXIraFBZaXBuY3hDQXB6M0VZb0diClJzZnRVa2lTcGNTa3ZHQUc5clZXSnFqam5Gd1MzNDArUVBPWmpJM3VVV0RUV1VjMHBJUVVUNW9GUFpsY01NRk0KazEyRzlkcUNKMU9ncG9OS3RVeGsrZz09Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+  # caCertData: 
+licence:
+  licenceData: MDJNVjRVVTQzQks1SEdZWVRPSlpXRlFNVE1OTkVXVTMzSkxFWkZLNlNPS1JFVEdUS1VJVjJFNE1TR05STkZHTUxJTEpDRUUzS01LUkFYT1dTVUlGMkU2UkRIUEJORUlWSlVKWktGQzZLMklSSVhPU0xKTzVVVlNNMldQSlNFT09MVUxKTUVVWlRCSzVJV1NUM0pKRVlGUzNLVlBGR1hVUUpRTEY0VEE2Q05QSktUQVRDWEpaV0ZTNlNaT1JNV1VSVE5MSkJUQzJTT0lSUlhVVFQyTEpVRTQzS0tOQkhFSTIzSkpSQlVVNERDTlpIREFXS1hQQlpWU1dDU09CUkRFTkxHTUZMVkMyS1BORkVYQ1NMSk81VVdDV0NPUEpTRk9WVEdNUkRXWTVDMktORVRNU0xLSkYzVTIyU1ZPUkdVSVJMVUpWQ0dJVktOSVJNVE1UU0VNTTNFMjZTQk9WSEZJVUpUSlpDR0dNS1BLUk1UR1YzSkpGWlVTM1NPR0JNVlFTUlFMQVpWRTREQ0s1S1dTVDNKSkY0VTJSQ0pHRkdGSVFMWUpSS0VDTTJXSVJBWE9UM0tJRjNVNjJTQk81TFdTU0xUSkZXVk1ORERJNVdIU1dLWUtKWUdFTVJWTVpTRU8zRFVMSkpVU05TSk5KRVhPVExLS1YyRTJSQ0pPUkdVSVpDVkpWQ0VDTlNOSVJBVE1US0VJSlFVUzJMWE5GU0VPVlRaTUpMV1k1S1pMQkpIQVlSU0dWVEdJUjNNT1JORkdTSldKRlZFUzUyTk5KS1hJVEtFSkYyRTJSREVLVkdVSVFKV0pWQ0VDTlNOSVJCR0NTTEpPNVVXR1NDS09aTkVRVlRLTVJCVVNOU0pOWkpHWVkzT0pKVUZVM0paUEZSRkdTTFRKRldWVTQyWks1U0hVU0xLT0EzV01XQlFIVVhERzJLRk01SEM2NUtCSlVYVEtNS01PTVlDVzNCWUxJWldNVDNTUEpXVEFRM0xOUjVIRzVLVE5aWVhLNkxZSlJVV1c0Q0pLRVZXS1pSWks0WldRWTJCSEJaQzZWUlNIQlVDV1JLU05KWkVRMkNaS0pGRk9ZMlZHUjNXUTNKTElOV1ZJUjNITlpCSEFNTEVJRlZXR1lKVU1STERBTVpUSEJJSE8zS1dOUlFYTVNTUUdSWUVVNkNKSkU0VUlOU1ZJWkdGS1lLV0tCVkdXVjJLT1JSVUlOVFFNRldETTMyUE1aRFc0U1pTUEpJRVdTU1NOVkRVUVZSVE1WTkhPNEtHTVVWVzZOM0xGNVpTV1FLVUpaVUZBV1RIS01YVVdWU1pNNFhVV0szTUk1SUhPVEJYTkpCSFFTSlhJNUhXQzJaV0tWUVdTWUtJTjVTV1dNQ1NLUlhUT01TRUtFNlQyCg==
+tfe:
+  metrics:
+    enable: true
+    httpPort: 9090
+    httpsPort: 9091
+  privateHttpPort: 8080
+  privateHttpsPort: 8443
+  ## Readiness probe settings customize the terraform-enterprise health check path, eg: to use the full service dependency check
+  # readinessProbePath: "/_health_check?full"
+  # readinessProbeScheme: "HTTP"
+
+# nodeSelector labels for server pod assignment, formatted as a multi-line string or YAML map.
+nodeSelector: {}
+
+# Toleration Settings
+# This should be either a multi-line string or YAML matching
+# the Toleration array in a PodSpec.
+tolerations: []
+# tolerations:
+# - key: "key"
+#   operator: "Equal"
+#   value: "value"
+#   effect: "NoSchedule"
+
+# Affinity Settings
+# Commenting out or setting as empty the affinity variable, will allow
+# deployment to single node services such as Minikube
+# This should be either a multi-line string or YAML matching the PodSpec's affinity field.
+affinity: {}
+#
+## Example:
+#
+#  affinity: |
+#    podAntiAffinity:
+#      requiredDuringSchedulingIgnoredDuringExecution:
+#        - labelSelector:
+#            matchExpressions:
+#             - key: foo
+#               operator: In
+#               values:
+#               - bar
+#          topologyKey: "kubernetes.io/hostname
+#    podAffinity:
+#      preferredDuringSchedulingIgnoredDuringExecution:
+#        - weight: 50
+#        podAffinityTerm:
+#          labelSelector:
+#            matchExpressions:
+#            - key: foo
+#              operator: In
+#              values:
+#                - bar
+#          topologyKey: "kubernetes.io/hostname"
+
+# Topology Spread Constraints
+# This should be either a multi-line string or YAML matching the PodSpec's typologySpreadConstraints field.
+topologySpreadConstraints: []
+
+## Example:
+#  - maxSkew: 1
+#    topologyKey: topology.kubernetes.io/zone
+#    whenUnsatisfiable: DoNotSchedule
+#    labelSelector:
+#      matchLabels:
+#        app: terraform-enterprise
+
+# Security context for the deployment template.
+# The deployment securityContext is not set by default.
+#This should be a YAML map corresponding to a
+# Kubernetes [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) object.
+securityContext:
+  runAsUser: 1000
+  fsGroup: 1012
+  runAsNonRoot: true
+
+# InitContainers is a list of init containers. Specified as a YAML list.
+# This is useful if you need to run a script to provision TLS certificates or
+# write out configuration files in a dynamic way.
+initContainers: null
+## Example ##
+#- name: init-demo
+#  image: busybox
+#  command:
+#      - wget
+#      - "-O"
+#      - "/work-dir/index.html"
+#      - http://info.cern.ch
+#    args:
+#  volumeMounts:
+#  - name: workdir
+#      mountPath "/work-dir"
+#    dnsPolicy: Default
+#    volumes:
+#    - name: workdir
+#    emptyDir: {}
+
+# Ingress allows ingress services to be created to allow external access
+# from Kubernetes to access Terraform Enterprise pods.
+ingress:
+  enabled: false
+  className: "" # nginx
+  annotations: {}
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  hosts:
+    - host: "" # "*.ptfe-dev.aws.ptfedev.com"
+      paths:
+        - path: /
+          pathType: Prefix
+          serviceName: "terraform-enterprise"
+          portNumber: 443
+  tls: []
+    # - secretName: terraform-enterprise-certificates
+    #   hosts:
+    #   - "*.ptfe-dev.aws.ptfedev.com"
+
+ # Injector service specific configurations
+service:
+  annotations: {}
+    # Add annotations here for specific cloud provider configurations.
+    # Examples:
+    # - For Google Cloud, use the NEG (Network Endpoint Group) annotation:
+    #   cloud.google.com/neg: '{"ingress": true}'
+    # - For Azure, configure the health probe request path for HTTPS health checks:
+    #   service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: "/_health_check"
+
+  type: LoadBalancer # The type of service to create. Options: LoadBalancer, ClusterIP, NodePort.
+                     # - LoadBalancer: Exposes the service externally using a cloud provider's load balancer.
+                     # - ClusterIP: Default type; exposes the service only within the cluster.
+                     # - NodePort: Exposes the service on a static port on each cluster node.
+
+  port: 443          # The port exposed by the service (external port).
+
+  nodePort: 32443    # If service.type is NodePort, this sets the external port on cluster nodes.
+                     # Ignored for LoadBalancer and ClusterIP types.
+
+  appProtocol: tcp   # Application protocol for the service.
+                     # - Default is "tcp" for broad compatibility across cloud providers.
+                     # - Set to "https" if Gateway API or Layer 7 features are required.
+
+  loadBalancerIP: null # If service.type is LoadBalancer, you can optionally set a specific external IP.
+                       # Useful for static IP requirements or pre-existing IP reservations.
+
+
+# Custom pod template to define your own specifications for the creation of the agent worker pods.
+# This should be YAML representing a valid corev1.PodTemplateSpec. This format is documented
+# at https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-template-v1/#PodTemplateSpec.
+agentWorkerPodTemplate: {}
+  # metadata: {}
+  # spec:
+  #   containers: []
+  #   nodeSelector: {}
+
+# Configuration for running this Helm chart on Red Hat OpenShift platform.
+openshift:
+  # If true, the Helm chart will create necessary configuration for running its components on OpenShift.
+  enabled: false
+
+env:
+  configFilePath: env-config.yaml
+  secretsFilePath: env-secrets.yaml
+  secrets:
+    TFE_DATABASE_PASSWORD: "16vDC|wPYFEESa~Ijr.8N21)1W9|" #to change
+    TFE_ENCRYPTION_PASSWORD: "Vinay@8637" #to change
+    # TFE_REDIS_PASSWORD: ""
+    # TFE_REDIS_SIDEKIQ_PASSWORD: ""
+    TFE_REDIS_HOST: "master.tfe-poc-redis.hzomjs.apse1.cache.amazonaws.com:6379"
+    TFE_DATABASE_HOST: "tfe-db.c5wmw4o86hss.ap-southeast-1.rds.amazonaws.com"
+    TFE_LICENCE: MDJNVjRVVTQzQks1SEdZWVRPSlpXRlFNVE1OTkVXVTMzSkxFWkZLNlNPS1JFVEdUS1VJVjJFNE1TR05STkZHTUxJTEpDRUUzS01LUkFYT1dTVUlGMkU2UkRIUEJORUlWSlVKWktGQzZLMklSSVhPU0xKTzVVVlNNMldQSlNFT09MVUxKTUVVWlRCSzVJV1NUM0pKRVlGUzNLVlBGR1hVUUpRTEY0VEE2Q05QSktUQVRDWEpaV0ZTNlNaT1JNV1VSVE5MSkJUQzJTT0lSUlhVVFQyTEpVRTQzS0tOQkhFSTIzSkpSQlVVNERDTlpIREFXS1hQQlpWU1dDU09CUkRFTkxHTUZMVkMyS1BORkVYQ1NMSk81VVdDV0NPUEpTRk9WVEdNUkRXWTVDMktORVRNU0xLSkYzVTIyU1ZPUkdVSVJMVUpWQ0dJVktOSVJNVE1UU0VNTTNFMjZTQk9WSEZJVUpUSlpDR0dNS1BLUk1UR1YzSkpGWlVTM1NPR0JNVlFTUlFMQVpWRTREQ0s1S1dTVDNKSkY0VTJSQ0pHRkdGSVFMWUpSS0VDTTJXSVJBWE9UM0tJRjNVNjJTQk81TFdTU0xUSkZXVk1ORERJNVdIU1dLWUtKWUdFTVJWTVpTRU8zRFVMSkpVU05TSk5KRVhPVExLS1YyRTJSQ0pPUkdVSVpDVkpWQ0VDTlNOSVJBVE1US0VJSlFVUzJMWE5GU0VPVlRaTUpMV1k1S1pMQkpIQVlSU0dWVEdJUjNNT1JORkdTSldKRlZFUzUyTk5KS1hJVEtFSkYyRTJSREVLVkdVSVFKV0pWQ0VDTlNOSVJCR0NTTEpPNVVXR1NDS09aTkVRVlRLTVJCVVNOU0pOWkpHWVkzT0pKVUZVM0paUEZSRkdTTFRKRldWVTQyWks1U0hVU0xLT0EzV01XQlFIVVhERzJLRk01SEM2NUtCSlVYVEtNS01PTVlDVzNCWUxJWldNVDNTUEpXVEFRM0xOUjVIRzVLVE5aWVhLNkxZSlJVV1c0Q0pLRVZXS1pSWks0WldRWTJCSEJaQzZWUlNIQlVDV1JLU05KWkVRMkNaS0pGRk9ZMlZHUjNXUTNKTElOV1ZJUjNITlpCSEFNTEVJRlZXR1lKVU1STERBTVpUSEJJSE8zS1dOUlFYTVNTUUdSWUVVNkNKSkU0VUlOU1ZJWkdGS1lLV0tCVkdXVjJLT1JSVUlOVFFNRldETTMyUE1aRFc0U1pTUEpJRVdTU1NOVkRVUVZSVE1WTkhPNEtHTVVWVzZOM0xGNVpTV1FLVUpaVUZBV1RIS01YVVdWU1pNNFhVV0szTUk1SUhPVEJYTkpCSFFTSlhJNUhXQzJaV0tWUVdTWUtJTjVTV1dNQ1NLUlhUT01TRUtFNlQyCg==    
+  variables:
+    # TFE_LICENSE_PATH: "/opt/terraform-enterprise-license/licence.hclic"
+    TFE_HOSTNAME: "tfe-poc.cksg.com"
+    TFE_DATABASE_USER: "tfe_postgres"
+    TFE_DATABASE_NAME: "tfe_external_db"
+    TFE_OBJECT_STORAGE_TYPE: "s3"
+    TFE_OBJECT_STORAGE_S3_USE_INSTANCE_PROFILE: "true"
+    TFE_OBJECT_STORAGE_S3_BUCKET: "tfe-s3-external-poc"
+    TFE_OBJECT_STORAGE_S3_REGION: "ap-southeast-1"
+    # TFE_REDIS_USER:
+    # TFE_REDIS_PASSWORD:
+    TFE_REDIS_USE_AUTH: "false"
+    TFE_REDIS_USE_TLS: "true"
+
+
+agents:
+  rbac:
+    enabled: false
+    annotations: {}
+    labels: {}
+  namespace:
+    # Whether to create a namespace for the agents.
+    enabled: false
+    # The name of the agent namespace to create, or the name of the namespace to use if it
+    # already exists. Defaults to the release namespace with the suffix "-agents".
+    name: null
+    annotations: {}
+    labels: {}
