@@ -1,8 +1,4 @@
-{{/*
-Copyright (c) HashiCorp, Inc.
-SPDX-License-Identifier: MPL-2.0
-*/}}
-
+---
 {{- if .Values.agents.rbac.enabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
