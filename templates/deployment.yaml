@@ -67,7 +67,8 @@ spec:
       {{- if .Values.serviceAccount.name}}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- else }}
-      serviceAccountName: {{ .Release.Namespace }}
+      # serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: {{ .Values.serviceAccount.manual }}
       {{- end }}
       {{- end }}
       initContainers:

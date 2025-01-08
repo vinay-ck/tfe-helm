@@ -13,7 +13,8 @@ image:
 
 serviceAccount:
   enabled: false
-  name: tfe-svc-account
+  # name: tfe-svc-account
+  manual: tfe-svc-account
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::096100671580:role/iamrole-tfe-eks-serviceaccount
   labels: {}
@@ -222,8 +223,8 @@ openshift:
   enabled: false
 
 env:
-  configFilePath: env-config.yaml
-  secretsFilePath: env-secrets.yaml
+  # configFilePath: env-config.yaml
+  # secretsFilePath: env-secrets.yaml
   secrets:
     TFE_DATABASE_PASSWORD: "16vDC|wPYFEESa~Ijr.8N21)1W9|" #to change
     TFE_ENCRYPTION_PASSWORD: "Vinay@8637" #to change
