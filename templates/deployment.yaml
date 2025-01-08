@@ -67,10 +67,10 @@ spec:
       {{- if .Values.serviceAccount.name}}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- else }}
-      # serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end }}
+      {{- end }}
       serviceAccountName: {{ .Values.serviceAccount.manual }}
-      {{- end }}
-      {{- end }}
       initContainers:
         {{ toYaml .Values.initContainers | nindent 8}}
       containers:

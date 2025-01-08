@@ -12,7 +12,7 @@ image:
  pullPolicy: IfNotPresent
 
 serviceAccount:
-  enabled: true
+  enabled: false
   # name: tfe-svc-account
   manual: tfe-svc-account
   annotations:
